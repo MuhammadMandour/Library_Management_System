@@ -2,6 +2,10 @@ package com.example.library.service;
 
 import com.example.library.dto.BookRequestDTO;
 import com.example.library.dto.BookResponseDTO;
+import com.example.library.entity.Author;
+import com.example.library.entity.Book;
+import com.example.library.exception.DuplicateResourceException;
+import com.example.library.exception.ResourceNotFoundException;
 import com.example.library.mapper.BookMapper;
 import com.example.library.repository.AuthorRepository;
 import com.example.library.repository.BookRepository;
@@ -12,26 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * TODO(team - assignee: ____):
- * Implement the Book service. Use AuthorService as a reference pattern.
- *
- * Methods needed:
- *  - findAll(Pageable)                     -> GET /api/books
- *  - findById(Long id)                     -> GET /api/books/{id}   (use bookRepository.findWithAuthorById)
- *  - create(BookRequestDTO)                -> POST /api/books       (author must exist -> else 404)
- *  - update(Long id, BookRequestDTO)       -> PUT /api/books/{id}
- *  - delete(Long id)                       -> DELETE /api/books/{id}
- *  - search(String title, String genre, Integer publishedYear) -> GET /api/books/search
- *  - findByAuthorId(Long authorId)         -> GET /api/authors/{id}/books
- *
- * Things to remember:
- *  - Throw ResourceNotFoundException when an id is not found (-> 404).
- *  - If authorId in request does not exist, throw ResourceNotFoundException("Author", authorId).
- *  - Duplicate ISBN -> throw DuplicateResourceException OR let DataIntegrityViolationException bubble up (both map to 409).
- *    Preferred: check with bookRepository.findByIsbn(...) first and throw the nicer message.
- *  - Keep @Transactional on the class and @Transactional(readOnly = true) on read methods.
- */
 @Service
 @Transactional
 public class BookService {
@@ -50,45 +34,73 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public Page<BookResponseDTO> findAll(Pageable pageable) {
-        // TODO(team): use bookRepository.findAll(pageable) and map to DTO.
-        throw new UnsupportedOperationException("findAll not implemented yet");
+        return bookRepository.findAll(pageable)
+                .map(bookMapper::toResponseDTO);
     }
 
     @Transactional(readOnly = true)
     public BookResponseDTO findById(Long id) {
-        // TODO(team): use bookRepository.findWithAuthorById(id).orElseThrow(...)
-        throw new UnsupportedOperationException("findById not implemented yet");
+        return bookRepository.findWithAuthorById(id)
+                .map(bookMapper::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", id));
     }
 
     public BookResponseDTO create(BookRequestDTO request) {
-        // TODO(team):
-        //   1. Look up Author by request.getAuthorId() -> else throw ResourceNotFoundException
-        //   2. Check bookRepository.findByIsbn(request.getIsbn()).isPresent() -> throw DuplicateResourceException
-        //   3. Map to entity, set author, save, return DTO
-        throw new UnsupportedOperationException("create not implemented yet");
+        Author author = authorRepository.findById(request.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Author", request.getAuthorId()));
+
+        if (bookRepository.findByIsbn(request.getIsbn()).isPresent()) {
+            throw new DuplicateResourceException("Book with ISBN " + request.getIsbn() + " already exists");
+        }
+
+        Book book = bookMapper.toEntity(request);
+        book.setAuthor(author);
+        Book saved = bookRepository.save(book);
+        return bookMapper.toResponseDTO(saved);
     }
 
     public BookResponseDTO update(Long id, BookRequestDTO request) {
-        // TODO(team): similar pattern to AuthorService.update, but also re-resolve Author if authorId changed.
-        throw new UnsupportedOperationException("update not implemented yet");
+        Book existing = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", id));
+
+        // If authorId changed, re-resolve author
+        if (!existing.getAuthor().getId().equals(request.getAuthorId())) {
+            Author author = authorRepository.findById(request.getAuthorId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Author", request.getAuthorId()));
+            existing.setAuthor(author);
+        }
+
+        // Check ISBN uniqueness if it changed
+        if (!existing.getIsbn().equals(request.getIsbn()) && 
+            bookRepository.findByIsbn(request.getIsbn()).isPresent()) {
+            throw new DuplicateResourceException("Book with ISBN " + request.getIsbn() + " already exists");
+        }
+
+        bookMapper.updateEntityFromDTO(request, existing);
+        Book saved = bookRepository.save(existing);
+        return bookMapper.toResponseDTO(saved);
     }
 
     public void delete(Long id) {
-        // TODO(team): existsById check + deleteById.
-        throw new UnsupportedOperationException("delete not implemented yet");
+        if (!bookRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Book", id);
+        }
+        bookRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)
     public List<BookResponseDTO> search(String title, String genre, Integer publishedYear) {
-        // TODO(team): delegate to bookRepository.searchBooks(title, genre, publishedYear)
-        throw new UnsupportedOperationException("search not implemented yet");
+        List<Book> books = bookRepository.searchBooks(title, genre, publishedYear);
+        return bookMapper.toResponseDTOList(books);
     }
 
     @Transactional(readOnly = true)
     public List<BookResponseDTO> findByAuthorId(Long authorId) {
-        // TODO(team):
-        //   1. If !authorRepository.existsById(authorId) -> throw ResourceNotFoundException("Author", authorId)
-        //   2. return bookRepository.findByAuthorId(authorId) mapped to DTO list
-        throw new UnsupportedOperationException("findByAuthorId not implemented yet");
+        if (!authorRepository.existsById(authorId)) {
+            throw new ResourceNotFoundException("Author", authorId);
+        }
+        List<Book> books = bookRepository.findByAuthorId(authorId);
+        return bookMapper.toResponseDTOList(books);
     }
 }
+

@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * TODO(team - assignee: ____):
- * Wire these endpoints to BookService. See AuthorController for the pattern.
+ * Controller for Book management endpoints.
  */
 @RestController
 @RequestMapping("/api/books")
