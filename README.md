@@ -47,10 +47,10 @@ From the project root:
 
 ```bash
 # Build
-./mvnw clean package
+./mvnw clean package or  .\mvnw.cmd clean package          
 
 # Run
-./mvnw spring-boot:run
+./mvnw spring-boot:run or  .\mvnw.cmd  spring-boot:run              
 ```
 
 The API is then available at `http://localhost:8080`.
