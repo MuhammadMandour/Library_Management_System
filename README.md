@@ -387,25 +387,38 @@ curl -X PUT http://localhost:8080/api/borrow-records/1/return
 
 ## 10. Postman Collection
 
-A ready-to-use Postman collection is included to test all API endpoints.
+A ready-to-use Postman collection is provided to test all API endpoints of the Library Management System.
 
 The collection file is located at:
 
 main/postman/LibraryAPI.postman_collection.json
 
- How to use it
-Open Postman
-Click Import (top left corner)
 
-Select the file:
+### How to Use
 
+1. Open :contentReference[oaicite:0]{index=0}  
+2. Click **Import** (top-left corner)
+3. Select **File**
+4. Choose:
 main/postman/LibraryAPI.postman_collection.json
 
-Click Import
-The collection Library API will appear in your workspace
-Click Run Collection to execute all tests
+5. Click **Import**
+6. The collection **Library API** will appear in your workspace
 
----
+###  Running the Tests
+
+- Open the imported collection
+- Click **Run Collection**
+- Execute all requests sequentially or run them individually
+
+###  What’s Included
+
+- Authors API (Create, Read, Update, Delete)
+- Books API (CRUD operations + duplicate ISBN validation)
+- Members API (CRUD operations + duplicate email validation)
+- Borrow Records workflow (borrow, return, history, conflict cases)
+- Cleanup requests to reset test data
+- Automated test assertions (status codes and response validation)
 
 ## 11. Troubleshooting
 
