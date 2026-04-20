@@ -1,0 +1,383 @@
+{
+  "info": {
+    "name": "Library API",
+    "_postman_id": "f464de47-ea7d-4ca6-a13f-5e8eb96e91db",
+    "description": "Collection for all endpoints in section 5 of the Library Management System spec.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "missingId", "value": "999999" },
+    { "key": "createdAuthorId", "value": "" },
+    { "key": "createdBookId", "value": "" },
+    { "key": "createdMemberId", "value": "" },
+    { "key": "createdBorrowRecordId", "value": "" },
+    { "key": "authorFirstName", "value": "Harper" },
+    { "key": "authorLastName", "value": "Lee" },
+    { "key": "authorNationality", "value": "American" },
+    { "key": "authorBirthDate", "value": "1926-04-28" },
+    { "key": "bookTitle", "value": "To Kill a Mockingbird" },
+    { "key": "bookIsbn", "value": "9780061120084" },
+    { "key": "bookGenre", "value": "Fiction" },
+    { "key": "bookYear", "value": "1960" },
+    { "key": "memberFirstName", "value": "John" },
+    { "key": "memberLastName", "value": "Reader" },
+    { "key": "memberEmail", "value": "john.reader@example.com" },
+    { "key": "memberPhoneNumber", "value": "+966500000001" }
+  ],
+  "item": [
+    {
+      "name": "Authors",
+      "item": [
+        {
+          "name": "Create Author (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "if (json && json.id) {",
+                  "  pm.collectionVariables.set('createdAuthorId', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"{{authorFirstName}}\",\n  \"lastName\": \"{{authorLastName}}\",\n  \"nationality\": \"{{authorNationality}}\",\n  \"birthDate\": \"{{authorBirthDate}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/authors"
+          }
+        },
+        {
+          "name": "Get All Authors (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/authors?page=0&size=10&sort=lastName,asc"
+          }
+        },
+        {
+          "name": "Get Author By ID (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/authors/{{createdAuthorId}}"
+          }
+        },
+        {
+          "name": "Update Author (200)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Nelle\",\n  \"lastName\": \"Lee\",\n  \"nationality\": \"American\",\n  \"birthDate\": \"1926-04-28\"\n}"
+            },
+            "url": "{{baseUrl}}/api/authors/{{createdAuthorId}}"
+          }
+        },
+        {
+          "name": "Get Books By Author (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/authors/{{createdAuthorId}}/books"
+          }
+        },
+        {
+          "name": "Get Author By Missing ID (404)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/authors/{{missingId}}"
+          }
+        },
+        {
+          "name": "Delete Author Missing ID (404)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/authors/{{missingId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Create Book (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "if (json && json.id) {",
+                  "  pm.collectionVariables.set('createdBookId', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{bookTitle}}\",\n  \"isbn\": \"{{bookIsbn}}\",\n  \"genre\": \"{{bookGenre}}\",\n  \"publishedYear\": {{bookYear}},\n  \"authorId\": {{createdAuthorId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/books"
+          }
+        },
+        {
+          "name": "Get All Books (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/books?page=0&size=10&sort=title,asc"
+          }
+        },
+        {
+          "name": "Search Books (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/books/search?title=Mockingbird&genre=Fiction&publishedYear=1960"
+          }
+        },
+        {
+          "name": "Get Book By ID (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/books/{{createdBookId}}"
+          }
+        },
+        {
+          "name": "Update Book (200)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"To Kill a Mockingbird (Updated)\",\n  \"isbn\": \"{{bookIsbn}}\",\n  \"genre\": \"Classic Fiction\",\n  \"publishedYear\": 1961,\n  \"authorId\": {{createdAuthorId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/books/{{createdBookId}}"
+          }
+        },
+        {
+          "name": "Create Duplicate ISBN Book (409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Duplicate ISBN Book\",\n  \"isbn\": \"{{bookIsbn}}\",\n  \"genre\": \"Test\",\n  \"publishedYear\": 2024,\n  \"authorId\": {{createdAuthorId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/books"
+          }
+        },
+        {
+          "name": "Get Book By Missing ID (404)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/books/{{missingId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "Create Member (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "if (json && json.id) {",
+                  "  pm.collectionVariables.set('createdMemberId', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"{{memberFirstName}}\",\n  \"lastName\": \"{{memberLastName}}\",\n  \"email\": \"{{memberEmail}}\",\n  \"phoneNumber\": \"{{memberPhoneNumber}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/members"
+          }
+        },
+        {
+          "name": "Get All Members (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/members?page=0&size=10&sort=lastName,asc"
+          }
+        },
+        {
+          "name": "Search Members (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/members/search?name=John"
+          }
+        },
+        {
+          "name": "Get Member By ID (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/members/{{createdMemberId}}"
+          }
+        },
+        {
+          "name": "Update Member (200)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Reader\",\n  \"email\": \"{{memberEmail}}\",\n  \"phoneNumber\": \"+966500000002\"\n}"
+            },
+            "url": "{{baseUrl}}/api/members/{{createdMemberId}}"
+          }
+        },
+        {
+          "name": "Create Duplicate Member Email (409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Reader\",\n  \"email\": \"{{memberEmail}}\",\n  \"phoneNumber\": \"+966500000099\"\n}"
+            },
+            "url": "{{baseUrl}}/api/members"
+          }
+        },
+        {
+          "name": "Get Member By Missing ID (404)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/members/{{missingId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Borrow Records",
+      "item": [
+        {
+          "name": "Borrow Book (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "if (json && json.id) {",
+                  "  pm.collectionVariables.set('createdBorrowRecordId', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": {{createdBookId}},\n  \"memberId\": {{createdMemberId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/borrow-records"
+          }
+        },
+        {
+          "name": "Borrow Same Book Again (409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bookId\": {{createdBookId}},\n  \"memberId\": {{createdMemberId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/borrow-records"
+          }
+        },
+        {
+          "name": "Get Active Borrow Records (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/borrow-records/active"
+          }
+        },
+        {
+          "name": "Get Member Borrow History (200)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/borrowrecords/member/{{createdMemberId}}"
+          }
+        },
+        {
+          "name": "Return Borrowed Book (200)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/borrow-records/{{createdBorrowRecordId}}/return"
+          }
+        },
+        {
+          "name": "Return Missing Borrow Record (404)",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/borrow-records/{{missingId}}/return"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cleanup",
+      "item": [
+        {
+          "name": "Delete Created Book (204)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/books/{{createdBookId}}"
+          }
+        },
+        {
+          "name": "Delete Created Member (204)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/members/{{createdMemberId}}"
+          }
+        },
+        {
+          "name": "Delete Created Author (204)",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/authors/{{createdAuthorId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
