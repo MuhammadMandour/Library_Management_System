@@ -31,7 +31,7 @@ global exception handler, so the client never sees a raw stack trace.
 
 ## 2. Prerequisites
 
-- **Java 17** (LTS)
+- **Java 21** (LTS)
 - **Maven 3.9+** (the Maven wrapper `./mvnw` is included, so no local install is required)
 
 Check your Java version:
