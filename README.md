@@ -387,129 +387,23 @@ curl -X PUT http://localhost:8080/api/borrow-records/1/return
 
 ## 10. Postman Collection
 
-Import this JSON into Postman to test all endpoints:
+A ready-to-use Postman collection is included to test all API endpoints.
 
-```json
-{
-  "info": {
-    "name": "Library Management System",
-    "description": "Complete REST API for Library Management",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Authors",
-      "item": [
-        {
-          "name": "Create Author",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"firstName\":\"Ahmed\",\"lastName\":\"Ibrahim\",\"nationality\":\"Egyptian\",\"birthDate\":\"1980-05-15\"}"
-            },
-            "url": {"raw": "http://localhost:8080/api/authors", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "authors"]}
-          }
-        },
-        {
-          "name": "Get All Authors",
-          "request": {
-            "method": "GET",
-            "url": {"raw": "http://localhost:8080/api/authors?page=0&size=10", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "authors"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}
-          }
-        },
-        {
-          "name": "Get Author by ID",
-          "request": {
-            "method": "GET",
-            "url": {"raw": "http://localhost:8080/api/authors/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "authors", "1"]}
-          }
-        }
-      ]
-    },
-    {
-      "name": "Books",
-      "item": [
-        {
-          "name": "Create Book",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"title\":\"The Arabic Literature\",\"isbn\":\"978-1234567890\",\"publishedYear\":2020,\"genre\":\"Literature\",\"authorId\":1}"
-            },
-            "url": {"raw": "http://localhost:8080/api/books", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "books"]}
-          }
-        },
-        {
-          "name": "Get All Books",
-          "request": {
-            "method": "GET",
-            "url": {"raw": "http://localhost:8080/api/books?page=0&size=10", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "books"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}
-          }
-        }
-      ]
-    },
-    {
-      "name": "Members",
-      "item": [
-        {
-          "name": "Register Member",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"firstName\":\"Mohammed\",\"lastName\":\"Ali\",\"email\":\"mohammed@example.com\",\"phoneNumber\":\"01012345678\"}"
-            },
-            "url": {"raw": "http://localhost:8080/api/members", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "members"]}
-          }
-        },
-        {
-          "name": "Get All Members",
-          "request": {
-            "method": "GET",
-            "url": {"raw": "http://localhost:8080/api/members?page=0&size=10", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "members"], "query": [{"key": "page", "value": "0"}, {"key": "size", "value": "10"}]}
-          }
-        }
-      ]
-    },
-    {
-      "name": "Borrow Records",
-      "item": [
-        {
-          "name": "Borrow Book",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"bookId\":1,\"memberId\":1}"
-            },
-            "url": {"raw": "http://localhost:8080/api/borrow-records", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "borrow-records"]}
-          }
-        },
-        {
-          "name": "Return Book",
-          "request": {
-            "method": "PUT",
-            "url": {"raw": "http://localhost:8080/api/borrow-records/1/return", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "borrow-records", "1", "return"]}
-          }
-        },
-        {
-          "name": "Get Member Borrow History",
-          "request": {
-            "method": "GET",
-            "url": {"raw": "http://localhost:8080/api/borrowrecords/member/1", "protocol": "http", "host": ["localhost"], "port": "8080", "path": ["api", "borrowrecords", "member", "1"]}
-          }
-        }
-      ]
-    }
-  ]
-}
-```
+The collection file is located at:
+
+main/postman/LibraryAPI.postman_collection.json
+
+ How to use it
+Open Postman
+Click Import (top left corner)
+
+Select the file:
+
+main/postman/LibraryAPI.postman_collection.json
+
+Click Import
+The collection Library API will appear in your workspace
+Click Run Collection to execute all tests
 
 ---
 
