@@ -5,6 +5,18 @@ Satisfies the Web Development — Library Management System assignment.
 
 ---
 
+## Team Members
+
+| ID | Group | Name |
+|---|---|---|
+| 36 | 4 | محمد خالد عبدالحميد |
+| 39 | 4 | ملك سعد عبدالله |
+| 46 | 4 | ياسمين بدر ضياء الدين |
+| 11 | 4 | اماني عثمان |
+| 14 | 4 | اوليفيا مرقص |
+
+---
+
 ## 1. Project description
 
 The API exposes CRUD operations over **Authors**, **Books**, and **Members**, plus a
@@ -510,50 +522,3 @@ Import this JSON into Postman to test all endpoints:
 | H2 console not accessible | Ensure `spring.h2.console.enabled=true` in `application.properties` |
 | ISBN or email already exists | Use unique values in create/update requests |
 | Cannot borrow book already checked out | Book must be returned first; check with `GET /api/borrow-records/active` |
-
----
-
-## 8. Project structure
-
-```
-src/main/java/com/example/library/
-  controller/   REST controllers (Author, Book, Member, BorrowRecord)
-  service/      Business logic
-  repository/   Spring Data JPA interfaces
-  entity/       JPA entities (Author, Book, Member, BorrowRecord)
-  dto/          Request & response DTOs
-  mapper/       MapStruct mapper interfaces
-  exception/    Custom exceptions + GlobalExceptionHandler + ErrorResponse
-src/main/resources/
-  application.properties
-```
-
----
-
-## 9. Testing the API
-
-A Postman collection is included at `postman/LibraryAPI.postman_collection.json`
-(TODO — see `TODO.md`). Alternatively, sample `curl` commands:
-
-```bash
-# Create an author
-curl -X POST http://localhost:8080/api/authors \
-  -H "Content-Type: application/json" \
-  -d '{"firstName":"George","lastName":"Orwell","nationality":"British","birthDate":"1903-06-25"}'
-
-# List authors, sorted
-curl "http://localhost:8080/api/authors?page=0&size=10&sort=lastName,asc"
-
-# Create a book (requires authorId to exist)
-curl -X POST http://localhost:8080/api/books \
-  -H "Content-Type: application/json" \
-  -d '{"title":"1984","isbn":"978-0451524935","genre":"Dystopian","publishedYear":1949,"authorId":1}'
-
-# Borrow a book
-curl -X POST http://localhost:8080/api/borrow-records \
-  -H "Content-Type: application/json" \
-  -d '{"bookId":1,"memberId":1}'
-
-# Return a book
-curl -X PUT http://localhost:8080/api/borrow-records/1/return
-```
